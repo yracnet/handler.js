@@ -4,33 +4,34 @@ export default {
         return graph;
     },
     routeConfig: function(config) {
-        if (typeof config === 'string') {
+        if (typeof config === 'string' || !config) {
             config = {
                 start: config
             };
         }
         return {
             start: config.start,
-            name: config.name || 'name',
+            attr: config.attr || 'name',
             next: config.next || 'next',
             check: config.check || true
         };
     },
     windowConfig: function(config) {
-        if (typeof config === 'string') {
+        if (typeof config === 'string' || !config) {
             config = {
-                name: config
+                attr: config
             };
         }
         return {
-            name: config.name || 'id',
+            attr: config.attr || 'name',
             check: config.check || true
         };
     },
-    searchByAttr: function(list, attr, value) {
-        for (var i = 0; i < list.length; i++) {
-            if (list[i][attr] === value) {
-                return list[i];
+    searchByAttr: function(array, attr, value) {
+        for (var i = 0; i < array.length; i++) {
+            let o = array[i];
+            if (o[attr] === value) {
+                return o;
             }
         }
         return undefined;

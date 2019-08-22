@@ -27,17 +27,16 @@ import _delegate from './util/delegate';
 import _help from './util/help';
 
 export default function routeHandler(_graph, _config) {
-    //_graph = _help.validateGraph(_graph);
     _config = _help.routeConfig(_config);
     let _state = {
         name: _config.start,
-        node: _help.searchByAttr(_graph, _config.name, _config.start),
+        node: _help.searchByAttr(_graph, _config.attr, _config.start),
         stack: new Array()
     };
     let _function = {
         reset: function() {
             _state.name = _config.start;
-            _state.node = _help.searchByAttr(_graph, _config.name, _state.name);
+            _state.node = _help.searchByAttr(_graph, _config.attr, _state.name);
             _state.stack = new Array();
         },
         next: function() {
@@ -50,7 +49,7 @@ export default function routeHandler(_graph, _config) {
                     if (next != _state.name) {
                         _state.stack.push(_state.name);
                         _state.name = next;
-                        _state.node = _help.searchByAttr(_graph, _config.name, _state.name);
+                        _state.node = _help.searchByAttr(_graph, _config.attr, _state.name);
                     }
                 }
             }
@@ -58,7 +57,7 @@ export default function routeHandler(_graph, _config) {
         },
         back: function() {
             _state.name = _state.stack.pop() || _config.start;
-            _state.node = _help.searchByAttr(_graph, _config.name, _state.name);
+            _state.node = _help.searchByAttr(_graph, _config.attr, _state.name);
             return _state.node;
         },
         name: function() {

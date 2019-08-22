@@ -1,0 +1,129 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.min.js"></script>
+    <script src="../../target/handler.js"></script>
+    <title>Window Handler Example</title>
+    <script>
+        angular.module('handler', [])
+            .controller('window', function($scope) {
+                $scope.model = {
+                    type: "A"
+                };
+                $scope.module = {
+                    module1: {
+                        id: 'p1',
+                        page: 'page/page1.html',
+                        title: 'Page 1'
+                    },
+                    module2: {
+                        id: 'p2',
+                        page: 'page/page2.html',
+                        title: 'Page 2'
+                    },
+                    module3: {
+                        id: 'p3',
+                        page: 'page/page3.html',
+                        title: 'Page 3'
+                    },
+                    module4: {
+                        id: 'p4',
+                        page: 'page/page4.html',
+                        title: 'Page 4'
+                    },
+                    module5: {
+                        id: 'p5',
+                        page: 'page/page5.html',
+                        title: 'Page 5'
+                    }
+                };
+                $scope.window = handler.windowHandler({
+                    attr: 'id'
+                });
+                $scope.open = function(module) {
+                    $scope.window.open(module);
+                }
+                $scope.close = function(module) {
+                    $scope.window.close(module);
+                }
+            });
+    </script>
+</head>
+
+<body ng-app="handler">
+
+    <div class="container" ng-controller="window">
+        <div class="row a-link">
+            <strong>PAGE</strong>
+            <a href="#" ng-repeat="o in module" ng-click="open(o)"> Open {{o.id}} </a>
+        </div>
+        <div class="row">
+            <ul class="list-group col-2">
+                <li class="list-group-item">
+                    STACK
+                </li>
+                <li ng-repeat="o in window.tracer().reverse()" class="list-group-item">
+                    <b>{{o.id}}</b>: {{o.title}}
+                    <a href="#" ng-click="close(o.id)">CLOSE</a>
+                </li>
+            </ul>
+            <div class="col-10">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item" ng-repeat="o in window.sort()">
+                        <span class="nav-link" ng-class="window[o.id]? 'active': 'inactive'">
+                                <a href="#" ng-click="open(o.id)">{{o.title}} </a> 
+                                <a href="#" ng-click="close(o.id)">X</a> 
+                            </span>
+                    </li>
+                </ul>
+                <div ng-repeat="o in window.sort()" ng-if="window[o.id]">
+                    <div ng-include="o.page">Load Step 1</div>
+                </div>
+
+            </div>
+            <!--
+            <div class="col-10">
+                <div>
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item" ng-repeat="o in window.sort()">
+                            <span class="nav-link" ng-class="window[o.id]? 'active': 'inactive'">
+                                <a href="#" ng-click="open(o.id)">{{o.title}} </a> 
+                                <a href="#" ng-click="close(o.id)">X</a> 
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+                <br/>
+                <div class="container-window">
+                    <div class="card" ng-repeat="o in window.sort()" ng-class="'level'+$index">
+                        <div class="card-header">
+                            {{o.title}} <a href="#" ng-click="close(o.id)">X</a>
+                        </div>
+                        <div class="card-body">
+                            <div ng-include="o.page">Load Step 1</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            -->
+        </div>
+
+
+
+        <div class="row">
+            <h6>
+                <b>Name: </b>{{window.name()}}
+                <hr />
+                <b>Node: </b>{{window.node()}}
+                <hr />
+                <b>Tracer: </b> <pre>{{window.tracer()|json}}</pre>
+            </h6>
+        </div>
+
+    </div>
+</body>
+
+</html>

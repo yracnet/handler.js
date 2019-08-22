@@ -2,135 +2,103 @@ const expect = require("chai").expect;
 const moduleLoad = require('./moduleLoad');
 
 var execute = moduleLoad('windowHandler', 'src/main/window.js');
-/*
-var graphBasic = [
-    { name: 'a', next: 'b' },
-    { name: 'b', next: 'c' },
-    { name: 'c', next: null }
-];
-var valor = 'b1';
-var graphOther = [{
-        name: 'a',
-        next: function() { return valor; }
-    },
-    { name: 'b1', next: 'c' },
-    { name: 'b2', next: 'c' },
-    { name: 'c', next: null }
-];
+
 
 describe("Test windowHandler", function() {
-    it("Compile Route", function() {
+    it("Compile Window", function() {
         return execute.then(windowHandler => {
             expect(windowHandler).not.be.undefined;
         });
     });
-    it("Route Basic", function() {
+    it("Window Basic", function() {
         return execute.then(windowHandler => {
-            let window = windowHandler(graphBasic, 'a');
+            let window = windowHandler();
+            window.open({ name: 'a', title: 'windows A' });
             expect(window.name()).to.equal("a");
             expect(window.a).to.equal(true);
         });
     });
-    it("Route Basic a->b->c", function() {
+    it("Window Basic open: a, b, c", function() {
         return execute.then(windowHandler => {
-            let window = windowHandler(graphBasic, 'a');
-            window.next();
-            window.next();
+            let window = windowHandler();
+            window.open({ name: 'a', title: 'windows A' });
+            window.open({ name: 'b', title: 'windows B' });
+            window.open({ name: 'c', title: 'windows C' });
             expect(window.name()).to.equal("c");
             expect(window.c).to.equal(true);
         });
     });
-    it("Route Basic a->b->c->null", function() {
+    it("Window Basic open: a, b, c, a", function() {
         return execute.then(windowHandler => {
-            let window = windowHandler(graphBasic, 'a');
-            window.next();
-            window.next();
-            window.next();
-            expect(window.name()).to.be.null;
-        });
-    });
-    it("Route Basic a->b->c-> -> -> null", function() {
-        return execute.then(windowHandler => {
-            let window = windowHandler(graphBasic, 'a');
-            window.next();
-            window.next();
-            window.next();
-            window.next();
-            window.next();
-            window.next();
-            expect(window.name()).to.be.null;
-        });
-    });
-    it("Route Basic a->b->c-> <- <-", function() {
-        return execute.then(windowHandler => {
-            let window = windowHandler(graphBasic, 'a');
-            window.next();
-            window.next();
-            window.next();
-            window.back();
-            window.back();
+            let window = windowHandler();
+            window.open({ name: 'a', title: 'windows A' });
+            window.open({ name: 'b', title: 'windows B' });
+            window.open({ name: 'c', title: 'windows C' });
+            window.open({ name: 'a', title: 'windows A 2' });
+            window.open({ name: 'b', title: 'windows B 2' });
+            expect(window.length()).to.equal(3);
             expect(window.name()).to.equal("b");
             expect(window.b).to.equal(true);
         });
     });
-    it("Route Basic a <- <- <- <-", function() {
+    it("Window Basic open: a, b, c, d close: a", function() {
         return execute.then(windowHandler => {
-            let window = windowHandler(graphBasic, 'a');
-            window.back();
-            window.back();
-            window.back();
-            window.back();
-            expect(window.name()).to.equal("a");
-            expect(window.a).to.equal(true);
+            let window = windowHandler();
+            window.open({ name: 'a', title: 'windows A' });
+            window.open({ name: 'b', title: 'windows B' });
+            window.open({ name: 'c', title: 'windows C' });
+            window.open({ name: 'd', title: 'windows D' });
+            expect(window.length()).to.equal(4);
+            expect(window.name()).to.equal("d");
+            expect(window.d).to.equal(true);
+            window.close('a');
+            expect(window.length()).to.equal(3);
+            expect(window.name()).to.equal("d");
+            expect(window.d).to.equal(true);
         });
     });
-
-
-    it("Route Other", function() {
+    it("Window Basic open: a, b, c, d close: NULL", function() {
         return execute.then(windowHandler => {
-            let window = windowHandler(graphOther, 'a');
-            expect(window.name()).to.equal("a");
-            expect(window.a).to.equal(true);
-        });
-    });
-    it("Route Other a->b1", function() {
-        return execute.then(windowHandler => {
-            let window = windowHandler(graphOther, 'a');
-            valor = 'b1';
-            window.next();
-            expect(window.name()).to.equal("b1");
-            expect(window.b1).to.equal(true);
-        });
-    });
-    it("Route Other a->b2", function() {
-        return execute.then(windowHandler => {
-            let window = windowHandler(graphOther, 'a');
-            valor = 'b2';
-            window.next();
-            expect(window.name()).to.equal("b2");
-            expect(window.b2).to.equal(true);
-        });
-    });
-    it("Route Other a->b2->c", function() {
-        return execute.then(windowHandler => {
-            let window = windowHandler(graphOther, 'a');
-            valor = 'b2';
-            window.next();
-            window.next();
+            let window = windowHandler();
+            window.open({ name: 'a', title: 'windows A' });
+            window.open({ name: 'b', title: 'windows B' });
+            window.open({ name: 'c', title: 'windows C' });
+            window.open({ name: 'd', title: 'windows D' });
+            expect(window.length()).to.equal(4);
+            expect(window.name()).to.equal("d");
+            window.close();
+            expect(window.length()).to.equal(3);
             expect(window.name()).to.equal("c");
             expect(window.c).to.equal(true);
         });
     });
-    it("Route Other a->b2->c<-", function() {
+    it("Window Basic open: a, b close: x", function() {
         return execute.then(windowHandler => {
-            let window = windowHandler(graphOther, 'a');
-            valor = 'b2';
-            window.next();
-            window.next();
-            window.back();
-            expect(window.name()).to.equal("b2");
-            expect(window.b2).to.equal(true);
+            let window = windowHandler();
+            window.open({ name: 'a', title: 'windows A' });
+            window.open({ name: 'b', title: 'windows B' });
+            expect(window.length()).to.equal(2);
+            expect(window.name()).to.equal("b");
+            expect(window.b).to.equal(true);
+            window.close({ name: 'x' });
+            expect(window.length()).to.equal(2);
+            expect(window.name()).to.equal("b");
+            expect(window.b).to.equal(true);
+        });
+    });
+    it("Window Basic open: a, b close: null, null, null", function() {
+        return execute.then(windowHandler => {
+            let window = windowHandler();
+            window.open({ name: 'a', title: 'windows A' });
+            window.open({ name: 'b', title: 'windows B' });
+            expect(window.length()).to.equal(2);
+            expect(window.name()).to.equal("b");
+            expect(window.b).to.equal(true);
+            window.close();
+            window.close();
+            window.close();
+            expect(window.length()).to.equal(0);
+            expect(window.name()).be.undefined;
         });
     });
 });
-/**/

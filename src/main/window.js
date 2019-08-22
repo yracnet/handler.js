@@ -19,6 +19,7 @@ import _help from './util/help';
 export default function windowHandler(_config) {
     _config = _help.windowConfig(_config);
     let _state = {
+        count: 1,
         node: undefined,
         stack: new Array()
     };
@@ -27,28 +28,51 @@ export default function windowHandler(_config) {
             if (!node) {
                 return false;
             }
-            let name = typeof node === "object" ? node[_config.name] : node;
-            node = typeof node === "object" ? node : _help.searchByAttr(_state.stack, _config.name, name);
-            if (name === _state.node[_config.name] || !node || !name) {
+            let value = typeof node === "object" ? node[_config.attr] : node;
+            node = typeof node === "object" ? node : _help.searchByAttr(_state.stack, _config.attr, value);
+            if (!node || !value || (_state.node && value === _state.node[_config.attr])) {
                 return false;
             }
-            _state.stack = _state.stack.filter(i => i[_config.name] !== name);
-            _state.stack.push(_state.node);
+            if (!node.$order) {
+                node.$order = _state.count++;
+            }
+            _state.stack = _state.stack.filter(o => o[_config.attr] !== value);
+            _state.stack.push(node);
             _state.node = node;
             return true;
         },
-        close: function(name) {
-            //_state.window = _state.stack.pop();
-        },
-        back: function() {
-            _state.node = _state.stack.pop();
+        close: function(node) {
+            if (node) {
+                //remove $order
+                let value = typeof node === "object" ? node[_config.attr] : node;
+                _state.stack.filter(o => o[_config.attr] === value).forEach(o => delete o.$order);
+                //remove object
+                _state.stack = _state.stack.filter(o => o[_config.attr] !== value);
+                _state.node = _state.stack[_state.stack.length - 1];
+            } else {
+                //remove $order
+                let o = _state.stack[_state.stack.length - 1];
+                delete o.$order;
+                //remove object
+                _state.stack.pop();
+                _state.node = _state.stack[_state.stack.length - 1];
+            }
         },
         node: function() {
             return _state.node;
+        },
+        name: function() {
+            return _state.node ? _state.node[_config.attr] : undefined;
+        },
+        length: function() {
+            return _state.stack.length;
+        },
+        sort: function() {
+            return _state.stack.slice().sort(function(a, b) { return a.$order - b.$order });
         },
         tracer: function() {
             return _state.stack.slice();
         }
     };
-    return _delegate('windowHandler', _function, attr => _state.node && attr && attr === _state.node[_config.name]);
+    return _delegate('windowHandler', _function, attr => _state.node && attr && attr === _state.node[_config.attr]);
 };

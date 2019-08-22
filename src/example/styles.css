@@ -139,3 +139,43 @@ body {
 .btn-breadcrumb .btn.btn-default:hover:not(:last-child):before {
     border-left: 10px solid #adadad;
 }
+
+.container-window {
+    position: relative;
+    width: 100%;
+}
+
+.container-window>div {
+    position: absolute;
+    overflow: hidden;
+}
+
+.container-window>.level1 {
+    left: 10px;
+    top: 10px;
+    z-index: 1000;
+}
+
+.container-window>.level2 {
+    left: 20px;
+    top: 20px;
+    z-index: 2000;
+}
+
+.container-window>.level3 {
+    left: 30px;
+    top: 30px;
+    z-index: 3000;
+}
+
+.container-window>.level4 {
+    left: 40px;
+    top: 40px;
+    z-index: 4000;
+}
+
+.container-window>.level5 {
+    left: 50px;
+    top: 50px;
+    z-index: 5000;
+}

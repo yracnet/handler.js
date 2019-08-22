@@ -63,12 +63,15 @@
 
     function crumbHandler(name) {
         let _state = {
-            default: name || 'index',
-            name: name || 'index',
+            default: name,
+            name: name,
             stack: new Array()
         };
         let _function = {
             open: function(name) {
+                if (!_state.default) {
+                    _state.default = name;
+                }
                 if (name === _state.name) {
                     return false;
                 }
@@ -95,31 +98,51 @@
     }
 
     var _help = {
-        validateGraph: function (graph) {
+        routeVerify: function(graph) {
             graph = graph || [];
             return graph;
         },
-        validateGraphConfig: function (config) {
-            if (typeof config === 'string') {
+        routeConfig: function(config) {
+            if (typeof config === 'string' || !config) {
                 config = {
                     start: config
                 };
             }
             return {
                 start: config.start,
-                name: config.name || 'name',
+                attr: config.attr || 'name',
                 next: config.next || 'next',
                 check: config.check || true
             };
         },
-        searchByAttr: function (list, attr, value) {
+        windowConfig: function(config) {
+            if (typeof config === 'string' || !config) {
+                config = {
+                    attr: config
+                };
+            }
+            return {
+                attr: config.attr || 'name',
+                check: config.check || true
+            };
+        },
+        searchByAttr: function(array, attr, value) {
+            for (var i = 0; i < array.length; i++) {
+                let o = array[i];
+                if (o[attr] === value) {
+                    return o;
+                }
+            }
+            return undefined;
+            //return list.filter(it => it[attr] === value)[0];
+        },
+        removeByAttr: function(list, attr, value) {
             for (var i = 0; i < list.length; i++) {
                 if (list[i][attr] === value) {
                     return list[i];
                 }
             }
             return undefined;
-            //return list.filter(it => it[attr] === value)[0];
         }
     };
 
@@ -148,18 +171,18 @@
      * // or
      * let route = routeHandler(graph, 'a');
      */
+
     function routeHandler(_graph, _config) {
-        //_graph = _help.validateGraph(_graph);
-        _config = _help.validateGraphConfig(_config);
+        _config = _help.routeConfig(_config);
         let _state = {
             name: _config.start,
-            node: _help.searchByAttr(_graph, _config.name, _config.start),
+            node: _help.searchByAttr(_graph, _config.attr, _config.start),
             stack: new Array()
         };
         let _function = {
             reset: function() {
                 _state.name = _config.start;
-                _state.node = _help.searchByAttr(_graph, _config.name, _state.name);
+                _state.node = _help.searchByAttr(_graph, _config.attr, _state.name);
                 _state.stack = new Array();
             },
             next: function() {
@@ -172,7 +195,7 @@
                         if (next != _state.name) {
                             _state.stack.push(_state.name);
                             _state.name = next;
-                            _state.node = _help.searchByAttr(_graph, _config.name, _state.name);
+                            _state.node = _help.searchByAttr(_graph, _config.attr, _state.name);
                         }
                     }
                 }
@@ -180,7 +203,7 @@
             },
             back: function() {
                 _state.name = _state.stack.pop() || _config.start;
-                _state.node = _help.searchByAttr(_graph, _config.name, _state.name);
+                _state.node = _help.searchByAttr(_graph, _config.attr, _state.name);
                 return _state.node;
             },
             name: function() {
@@ -202,11 +225,87 @@
         return _delegate('routeHandler', _function, attr => attr === _state.name);
     }
 
+    /**
+     * let window = windowHandler({name: 'id'});
+     * console.log('state: ', window.a, window.b, window.c); //false, false, false
+     * window.open({id:'a'});
+     * console.log('state: ', window.a, window.b, window.c); //true, false, false
+     * window.open({id:'b'});
+     * console.log('state: ', window.a, window.b, window.c); //false, true, false
+     * window.open({id:'c'});
+     * console.log('state: ', window.a, window.b, window.c); //false, false, true
+     * window.back();
+     * window.back();
+     * console.log('state: ', window.a, window.b, window.c); //true, false, false
+     * window.back();
+     * console.log('state: ', window.a, window.b, window.c); //false, false, false
+     */
+
+    function windowHandler(_config) {
+        _config = _help.windowConfig(_config);
+        let _state = {
+            count: 1,
+            node: undefined,
+            stack: new Array()
+        };
+        let _function = {
+            open: function(node) {
+                if (!node) {
+                    return false;
+                }
+                let value = typeof node === "object" ? node[_config.attr] : node;
+                node = typeof node === "object" ? node : _help.searchByAttr(_state.stack, _config.attr, value);
+                if (!node || !value || (_state.node && value === _state.node[_config.attr])) {
+                    return false;
+                }
+                //_state.stack.filter(o => o[_config.attr] === value).forEach(o => o.$order = null);
+                if (!node.$order) {
+                    node.$order = _state.count++;
+                }
+                _state.stack = _state.stack.filter(o => o[_config.attr] !== value);
+                _state.stack.push(node);
+                _state.node = node;
+                return true;
+            },
+            close: function(node) {
+                if (node) {
+                    let value = typeof node === "object" ? node[_config.attr] : node;
+                    _state.stack.filter(o => o[_config.attr] === value).forEach(o => delete o.$order);
+                    _state.stack = _state.stack.filter(o => o[_config.attr] !== value);
+                    _state.node = _state.stack[_state.stack.length - 1];
+                } else {
+                    //_state.stack.filter(o => o[_config.attr] === value).forEach(o => delete o.$order);
+                    let o = _state.stack[_state.stack.length - 1];
+                    delete o.$order;
+                    _state.stack.pop();
+                    _state.node = _state.stack[_state.stack.length - 1];
+                }
+            },
+            node: function() {
+                return _state.node;
+            },
+            name: function() {
+                return _state.node ? _state.node[_config.attr] : undefined;
+            },
+            length: function() {
+                return _state.stack.length;
+            },
+            sort: function() {
+                return _state.stack.slice().sort(function(a, b) { return a.$order - b.$order });
+            },
+            tracer: function() {
+                return _state.stack.slice();
+            }
+        };
+        return _delegate('windowHandler', _function, attr => _state.node && attr && attr === _state.node[_config.attr]);
+    }
+
     //var { version } = require('../package.json');
 
 
     var main = {
         //version,
+        windowHandler,
         crumbHandler,
         routeHandler
     };
