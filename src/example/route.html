@@ -2,90 +2,118 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="styles.css">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.min.js"></script>
     <script src="../../target/handler.js"></script>
     <title>Router Handler Example</title>
     <script>
         angular.module('handler', [])
             .controller('route', function ($scope) {
-                $scope.model = { value: "page3a" };
+                $scope.model = { type: "A" };
+                $scope.page = {
+                    step1: 'step/step1.html',
+                    step2a: 'step/step2a.html',
+                    step2b: 'step/step2b.html',
+                    step3: 'step/step3.html'
+                };
                 $scope.graph = [
                     {
-                        name: 'page1',
-                        next: 'page2'
-                    },
-                    {
-                        name: 'page2',
+                        name: 'step1',
                         next: function () {
-                            return $scope.model.value;
+                            return $scope.model.type === 'S' ? 'step2a' : $scope.model.type === 'W' ? 'step2b' : 'step1';
                         }
                     },
                     {
-                        name: 'page3a',
-                        next: 'page4'
+                        name: 'step2a',
+                        next: 'step3'
                     },
                     {
-                        name: 'page3b',
-                        next: 'page4'
+                        name: 'step2b',
+                        next: 'step3'
                     },
                     {
-                        name: 'page4',
-                        next: 'page2'
+                        name: 'step3'
                     }
                 ];
-                $scope.route = handler.routeHandler($scope.graph, 'page1');
+                $scope.route = handler.routeHandler($scope.graph, 'step1');
                 $scope.next = function () {
                     $scope.route.next();
                 }
                 $scope.back = function () {
                     $scope.route.back();
                 }
+                $scope.reset = function () {
+                    $scope.route.reset();
+                }
             });
     </script>
 </head>
 
-<body ng-app="handler" class="container">
-    <div ng-controller="route" class="content">
-        <div class="page">
+<body ng-app="handler">
 
+    <div class="container" ng-controller="route">
+
+        <div class="stepwizard col-md-offset-3">
+            <div class="stepwizard-row setup-panel">
+                <div class="stepwizard-step">
+                    <a href="#step-1" type="button" class="btn btn-primary btn-circle"
+                        ng-class="route.step1? 'btn-primary' : 'btn-default'">1</a>
+                    <p>Step 1</p>
+                </div>
+                <div class="stepwizard-step">
+                    <a href="#step-2-a" type="button" class="btn btn-default btn-circle"
+                        ng-class="route.step2a? 'btn-primary' : 'btn-default'">2-A</a>
+                    <p>Step 2-A</p>
+                </div>
+                <div class="stepwizard-step">
+                    <a href="#step-2-b" type="button" class="btn btn-default btn-circle"
+                        ng-class="route.step2b? 'btn-primary' : 'btn-default'">2-B</a>
+                    <p>Step 2-B</p>
+                </div>
+                <div class="stepwizard-step">
+                    <a href="#step-3" type="button" class="btn btn-default btn-circle"
+                        ng-class="route.step3? 'btn-primary' : 'btn-default'">3</a>
+                    <p>Step 3</p>
+                </div>
+            </div>
         </div>
-        <a href="#" ng-click="back()"> Atras </a>
-        <code>{{route.node()}}</code>
-        <div ng-if="route.page1">
-            <p>Pagina 1</p>
-            <a href="#" ng-click="back()"> Atras </a>
-            <a href="#" ng-click="next()"> Next </a>
+        <div class="row setup-content">
+            <div class="col-xs-6 col-md-offset-3">
+                <div class="col-md-12">
+                    <div ng-if="route.step1" ng-include="page.step1">Load Step 1</div>
+                    <div ng-if="route.step2a" ng-include="page.step2a">Load Step 2 A</div>
+                    <div ng-if="route.step2b" ng-include="page.step2b">Load Step 2 B</div>
+                    <div ng-if="route.step3" ng-include="page.step3">Load Step 3</div>
+                </div>
+            </div>
         </div>
-        <div ng-if="route.page2">
-            <p>Pagina 2</p>
-            <h4>value:{{model.value}}</h4>
-            <select ng-model="model.value">
-                <option value="page4">Page 4</option>
-                <option value="page3a">Page 3 A</option>
-                <option value="page3b">Page 3 B</option>
-            </select>
-            <a href="#" ng-click="back()"> Atras </a>
-            <a href="#" ng-click="next()"> Next </a>
+        <div class="row">
+            <button class="btn btn-secundary" type="button" ng-click="back()" ng-disabled="route.first()">Previous</button>
+
+            <button class="btn btn-primary" type="button" ng-click="next()" ng-disabled="route.last()">Next</button>
+
+            <button class="btn btn-danger" type="button" ng-click="reset()" ng-disabled="!route.last()">Reset</button>
         </div>
-        <div ng-if="route.page3a">
-            <p>Pagina 3 A</p>
-            <a href="#" ng-click="back()"> Atras </a>
-            <a href="#" ng-click="next()"> Next </a>
+        <div class="row">
+            <h3>
+                <hr />
+                <b>Tracer: </b>{{route.tracer()}}
+                <hr />
+                <b>Node: </b>{{route.node()}}
+                <hr />
+                <b>Name: </b>{{route.name()}}
+                <hr />
+                <b>First: </b>{{route.first()}}
+                <hr />
+                <b>Last: </b>{{route.last()}}
+                <hr />
+                <b>Graph: </b><pre>{{graph|json}}</pre>
+            </h3>
         </div>
-        <div ng-if="route.page3b">
-            <p>Pagina 3 B</p>
-            <a href="#" ng-click="back()"> Atras </a>
-            <a href="#" ng-click="next()"> Next </a>
-        </div>
-        <div ng-if="route.page4">
-            <p>Pagina 4</p>
-            <a href="#" ng-click="back()"> Atras </a>
-            <a href="#" ng-click="next()"> End </a>
-        </div>
-        <code>Tracer:{{route.tracer()}}</code>
+
     </div>
-
 </body>
 
 </html>

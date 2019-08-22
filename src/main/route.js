@@ -34,20 +34,24 @@ export default function routeHandler(_graph, _config) {
     stack: new Array()
   };
   let _function = {
-    restart: function () {
+    reset: function () {
       _state.name = _config.start;
       _state.node = _help.searchByAttr(_graph, _config.name, _state.name);
       _state.stack = new Array();
     },
     next: function () {
       if (_state.node) {
-        let next = _state.node[_config.next];
-        if (typeof next === "function") {
-          next = next(_state.name, _graph);
+        let check = _state.node[_config.check] || true;
+        check = typeof check === "function"? check(_state.name) : check;
+        if(check){
+          let next = _state.node[_config.next];
+          next = typeof next === "function"? next(_state.name, _graph) : next;
+          if(next != _state.name){
+            _state.stack.push(_state.name);
+            _state.name = next;
+            _state.node = _help.searchByAttr(_graph, _config.name, _state.name);
+          }
         }
-        _state.stack.push(_state.name);
-        _state.name = next;
-        _state.node = _help.searchByAttr(_graph, _config.name, _state.name);
       }
       return _state.node;
     },
@@ -64,6 +68,12 @@ export default function routeHandler(_graph, _config) {
     },
     tracer: function () {
       return _state.stack.slice();
+    },
+    first: function () {
+      return _state.stack.length ===0;
+    },
+    last: function () {
+      return _state.node != null && _state.node.next === undefined;
     }
   };
   return _delegate('routeHandler', _function, attr => attr === _state.name);
