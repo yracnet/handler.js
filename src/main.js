@@ -4,7 +4,7 @@ import routeHandler from './main/route';
 
 
 export default {
-  //version,
-  crumbHandler,
-  routeHandler
+    //version,
+    crumbHandler,
+    routeHandler
 };

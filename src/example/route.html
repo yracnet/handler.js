@@ -2,49 +2,45 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
     <link rel="stylesheet" href="styles.css">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.min.js"></script>
     <script src="../../target/handler.js"></script>
     <title>Router Handler Example</title>
     <script>
         angular.module('handler', [])
-            .controller('route', function ($scope) {
-                $scope.model = { type: "A" };
+            .controller('route', function($scope) {
+                $scope.model = {
+                    type: "A"
+                };
                 $scope.page = {
                     step1: 'step/step1.html',
                     step2a: 'step/step2a.html',
                     step2b: 'step/step2b.html',
                     step3: 'step/step3.html'
                 };
-                $scope.graph = [
-                    {
-                        name: 'step1',
-                        next: function () {
-                            return $scope.model.type === 'S' ? 'step2a' : $scope.model.type === 'W' ? 'step2b' : 'step1';
-                        }
-                    },
-                    {
-                        name: 'step2a',
-                        next: 'step3'
-                    },
-                    {
-                        name: 'step2b',
-                        next: 'step3'
-                    },
-                    {
-                        name: 'step3'
+                $scope.graph = [{
+                    name: 'step1',
+                    next: function() {
+                        return $scope.model.type === 'S' ? 'step2a' : $scope.model.type === 'W' ? 'step2b' : 'step1';
                     }
-                ];
+                }, {
+                    name: 'step2a',
+                    next: 'step3'
+                }, {
+                    name: 'step2b',
+                    next: 'step3'
+                }, {
+                    name: 'step3'
+                }];
                 $scope.route = handler.routeHandler($scope.graph, 'step1');
-                $scope.next = function () {
+                $scope.next = function() {
                     $scope.route.next();
                 }
-                $scope.back = function () {
+                $scope.back = function() {
                     $scope.route.back();
                 }
-                $scope.reset = function () {
+                $scope.reset = function() {
                     $scope.route.reset();
                 }
             });
@@ -58,23 +54,19 @@
         <div class="stepwizard col-md-offset-3">
             <div class="stepwizard-row setup-panel">
                 <div class="stepwizard-step">
-                    <a href="#step-1" type="button" class="btn btn-primary btn-circle"
-                        ng-class="route.step1? 'btn-primary' : 'btn-default'">1</a>
+                    <a href="#step-1" type="button" class="btn btn-primary btn-circle" ng-class="route.step1? 'btn-primary' : 'btn-default'">1</a>
                     <p>Step 1</p>
                 </div>
                 <div class="stepwizard-step">
-                    <a href="#step-2-a" type="button" class="btn btn-default btn-circle"
-                        ng-class="route.step2a? 'btn-primary' : 'btn-default'">2-A</a>
+                    <a href="#step-2-a" type="button" class="btn btn-default btn-circle" ng-class="route.step2a? 'btn-primary' : 'btn-default'">2-A</a>
                     <p>Step 2-A</p>
                 </div>
                 <div class="stepwizard-step">
-                    <a href="#step-2-b" type="button" class="btn btn-default btn-circle"
-                        ng-class="route.step2b? 'btn-primary' : 'btn-default'">2-B</a>
+                    <a href="#step-2-b" type="button" class="btn btn-default btn-circle" ng-class="route.step2b? 'btn-primary' : 'btn-default'">2-B</a>
                     <p>Step 2-B</p>
                 </div>
                 <div class="stepwizard-step">
-                    <a href="#step-3" type="button" class="btn btn-default btn-circle"
-                        ng-class="route.step3? 'btn-primary' : 'btn-default'">3</a>
+                    <a href="#step-3" type="button" class="btn btn-default btn-circle" ng-class="route.step3? 'btn-primary' : 'btn-default'">3</a>
                     <p>Step 3</p>
                 </div>
             </div>

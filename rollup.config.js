@@ -1,19 +1,19 @@
 import fs from 'fs';
 import pkg from './package.json';
-module.exports = {
-  input: 'src/main.js',
-  output: {
-    file: 'target/handler.js',
-    name: pkg.name,
-    format: 'umd',
-    banner: (
-      `/*!\n${
-      String(fs.readFileSync('./LICENSE'))
+var comment = function(name) {
+    return "/*!\n" + String(fs.readFileSync(name))
         .trim()
         .split('\n')
         .map(l => ` * ${l}`)
-        .join('\n')
-      }\n */`
-    )
-  }
+        .join('\n') +
+        "\n */";
+};
+module.exports = {
+    input: 'src/main.js',
+    output: {
+        file: 'target/handler.js',
+        name: pkg.name,
+        format: 'umd',
+        banner: comment('./LICENSE')
+    }
 };
