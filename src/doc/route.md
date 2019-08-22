@@ -31,3 +31,4 @@ let route = routeHandler(graph, config);
 // or
 let route = routeHandler(graph, 'a');
 ```
+[<< Return](../../README.md)

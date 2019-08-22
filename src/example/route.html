@@ -1,0 +1,98 @@
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.min.js"></script>
+    <script src="../../target/handler.js"></script>
+    <script>
+        console.log('--->', handler);
+        angular.module('handler', [])
+            .controller('route', function ($scope) {
+                $scope.model = { value: "page3a" };
+                $scope.graph = [
+                    {
+                        name: 'page1',
+                        next: 'page2'
+                    },
+                    {
+                        name: 'page2',
+                        next: function () {
+                            return $scope.model.value;
+                        }
+                    },
+                    {
+                        name: 'page3a',
+                        next: 'page4'
+                    },
+                    {
+                        name: 'page3b',
+                        next: 'page4'
+                    },
+                    {
+                        name: 'page4',
+                        next: 'page2'
+                    }
+                ];
+                $scope.route = handler.routeHandler($scope.graph, 'page1');
+                $scope.next = function () {
+                    $scope.route.next();
+                }
+                $scope.back = function () {
+                    $scope.route.back();
+                }
+            });
+    </script>
+    <style>
+        .example>div {
+            border: 2px solid red;
+            width: 300px;
+            height: auto;
+            text-align: center;
+        }
+
+        .example>div>a {
+            padding: 0 10px;
+        }
+    </style>
+</head>
+
+<body ng-app="handler">
+    <div ng-controller="route" class="example">
+        <a href="#" ng-click="back()"> Atras </a>
+        <code>{{route.node()}}</code>
+        <div ng-if="route.page1">
+            <p>Pagina 1</p>
+            <a href="#" ng-click="back()"> Atras </a>
+            <a href="#" ng-click="next()"> Next </a>
+        </div>
+        <div ng-if="route.page2">
+            <p>Pagina 2</p>
+            <h4>value:{{model.value}}</h4>
+            <select ng-model="model.value">
+                <option value="page4">Page 4</option>
+                <option value="page3a">Page 3 A</option>
+                <option value="page3b">Page 3 B</option>
+            </select>
+            <a href="#" ng-click="back()"> Atras </a>
+            <a href="#" ng-click="next()"> Next </a>
+        </div>
+        <div ng-if="route.page3a">
+            <p>Pagina 3 A</p>
+            <a href="#" ng-click="back()"> Atras </a>
+            <a href="#" ng-click="next()"> Next </a>
+        </div>
+        <div ng-if="route.page3b">
+            <p>Pagina 3 B</p>
+            <a href="#" ng-click="back()"> Atras </a>
+            <a href="#" ng-click="next()"> Next </a>
+        </div>
+        <div ng-if="route.page4">
+            <p>Pagina 4</p>
+            <a href="#" ng-click="back()"> Atras </a>
+            <a href="#" ng-click="next()"> End </a>
+        </div>
+        <code>Tracer:{{route.tracer()}}</code>
+    </div>
+
+</body>
+
+</html>

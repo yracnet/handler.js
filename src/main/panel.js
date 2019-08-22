@@ -26,6 +26,9 @@ export default function panelHandler(name) {
     },
     name: function () {
       return _state.name;
+    },
+    tracer: function () {
+      return _state.stack.slice();
     }
   };
   return _delegate('panelHandler', _function, attr => attr === _state.name);

@@ -18,6 +18,12 @@ export default {
         };
     },
     searchByAttr: function (list, attr, value) {
-        return list.filter(it => it[attr] === value)[0];
+        for (var i = 0; i < list.length; i++) {
+          if (list[i][attr] === value) {
+            return list[i];
+          }
+        }
+        return undefined;
+        //return list.filter(it => it[attr] === value)[0];
     }
 };

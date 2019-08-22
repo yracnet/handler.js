@@ -8,3 +8,4 @@ a -> b -> c -> d
 ```javascript
 let panel = panelHandler('a');
 ```
+[<< Return](../../README.md)

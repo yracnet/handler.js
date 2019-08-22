@@ -26,7 +26,7 @@
 import _delegate from './util/delegate';
 import _help from './util/help';
 export default function routeHandler(_graph, _config) {
-  _graph = _help.validateGraph(_graph);
+  //_graph = _help.validateGraph(_graph);
   _config = _help.validateGraphConfig(_config);
   let _state = {
     name: _config.start,
@@ -61,6 +61,9 @@ export default function routeHandler(_graph, _config) {
     },
     node: function () {
       return _state.node;
+    },
+    tracer: function () {
+      return _state.stack.slice();
     }
   };
   return _delegate('routeHandler', _function, attr => attr === _state.name);
