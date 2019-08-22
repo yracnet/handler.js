@@ -1,11 +1,11 @@
 
-### Panel
-*  panel:
+### Crumb
+*  crumb:
 ```
 a -> b -> c -> d
 ```
-*  Use panelHandler:
+*  Use crumbHandler:
 ```javascript
-let panel = panelHandler('a');
+let crumb = crumbHandler('a');
 ```
 [<< Return](../../README.md)

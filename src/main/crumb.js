@@ -19,8 +19,12 @@ export default function crumbHandler(name) {
   };
   let _function = {
     open: function (name) {
+      if (name === _state.name) {
+        return false;
+      }
       _state.stack.push(_state.name);
       _state.name = name;
+      return true;
     },
     back: function () {
       _state.name = _state.stack.pop() || _state.default;

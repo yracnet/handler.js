@@ -1,14 +1,24 @@
 <html>
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="styles.css">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.min.js"></script>
     <script src="../../target/handler.js"></script>
-    <link rel="stylesheet" href="styles.css">
     <script>
         angular.module('handler', [])
             .controller('crumb', function ($scope) {
+                $scope.page = {
+                    page1: 'page/page1.html',
+                    page2: 'page/page2.html',
+                    page3: 'page/page3.html',
+                    page4: 'page/page4.html',
+                    page5: 'page/page5.html'
+                };
                 $scope.crumb = handler.crumbHandler('page1');
-                $scope.go = function (name) {
+                $scope.open = function (name) {
                     $scope.crumb.open(name);
                 }
                 $scope.back = function () {
@@ -19,34 +29,41 @@
 </head>
 
 <body ng-app="handler">
-    <div ng-controller="crumb" class="example">
-        <a href="#" ng-click="back()"> Atras </a>
-        <div ng-if="crumb.page1">
-            <p>Pagina 1</p>
+    <div ng-controller="crumb" class="container">
+        <div class="row">
             <a href="#" ng-click="back()"> Atras </a>
-            <a href="#" ng-click="go('page2')"> Pagina 2 </a>
+            &nbsp;-&nbsp;
+            <span ng-repeat="item in crumb.tracer() track by $index">
+                <a href="#">{{item}}</a>&nbsp;-&gt;&nbsp;
+            </span>
+            <span>
+                <b>{{crumb.name()}}</b>
+            </span>
         </div>
-        <div ng-if="crumb.page2">
-            <p>Pagina 2</p>
-            <a href="#" ng-click="back()"> Atras </a>
-            <a href="#" ng-click="go('page3')"> Pagina 3 </a>
+        <hr/>
+        <div class="row">
+            <div ng-if="crumb.page1" ng-include="page.page1">Load Page 1</div>
+            <div ng-if="crumb.page2" ng-include="page.page2">Load Page 2</div>
+            <div ng-if="crumb.page3" ng-include="page.page3">Load Page 3</div>
+            <div ng-if="crumb.page4" ng-include="page.page4">Load Page 4</div>
+            <div ng-if="crumb.page5" ng-include="page.page5">Load Page 5</div>
         </div>
-        <div ng-if="crumb.page3">
-            <p>Pagina 3</p>
-            <a href="#" ng-click="back()"> Atras </a>
-            <a href="#" ng-click="go('page4')"> Pagina 4 </a>
+        <hr/>
+        <div class="row a-link">
+            <a href="#" ng-click="open('page1')"> Page 1 </a>
+            <a href="#" ng-click="open('page2')"> Page 2 </a>
+            <a href="#" ng-click="open('page3')"> Page 3 </a>
+            <a href="#" ng-click="open('page4')"> Page 4 </a>
+            <a href="#" ng-click="open('page5')"> Page 5 </a>
         </div>
-        <div ng-if="crumb.page4">
-            <p>Pagina 4</p>
-            <a href="#" ng-click="back()"> Atras </a>
-            <a href="#" ng-click="go('page5')"> Pagina 5 </a>
+        <div class="row">
+            <h6>
+                <hr />
+                <b>Tracer: </b>{{crumb.tracer()}}
+                <hr />
+                <b>Name: </b>{{crumb.name()}}
+            </h6>
         </div>
-        <div ng-if="crumb.page5">
-            <p>Pagina 5</p>
-            <a href="#" ng-click="back()"> Atras </a>
-            <a href="#" ng-click="go('page3')"> Pagina 3 </a>
-        </div>
-        <code>Tracer:{{crumb.tracer()}}</code>
     </div>
 
 </body>

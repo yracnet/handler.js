@@ -40,3 +40,6 @@ body {
     line-height: 1.428571429;
     border-radius: 15px;
 }
+.a-link > * {
+    padding: 0 20px;
+}
