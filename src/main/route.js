@@ -25,9 +25,10 @@
  */
 import _delegate from './util/delegate';
 import _help from './util/help';
+
 export default function routeHandler(_graph, _config) {
     //_graph = _help.validateGraph(_graph);
-    _config = _help.validateGraphConfig(_config);
+    _config = _help.routeConfig(_config);
     let _state = {
         name: _config.start,
         node: _help.searchByAttr(_graph, _config.name, _config.start),

@@ -1,9 +1,9 @@
 export default {
-    validateGraph: function (graph) {
+    routeVerify: function(graph) {
         graph = graph || [];
         return graph;
     },
-    validateGraphConfig: function (config) {
+    routeConfig: function(config) {
         if (typeof config === 'string') {
             config = {
                 start: config
@@ -16,7 +16,18 @@ export default {
             check: config.check || true
         };
     },
-    searchByAttr: function (list, attr, value) {
+    windowConfig: function(config) {
+        if (typeof config === 'string') {
+            config = {
+                name: config
+            };
+        }
+        return {
+            name: config.name || 'id',
+            check: config.check || true
+        };
+    },
+    searchByAttr: function(list, attr, value) {
         for (var i = 0; i < list.length; i++) {
             if (list[i][attr] === value) {
                 return list[i];
@@ -24,5 +35,13 @@ export default {
         }
         return undefined;
         //return list.filter(it => it[attr] === value)[0];
+    },
+    removeByAttr: function(list, attr, value) {
+        for (var i = 0; i < list.length; i++) {
+            if (list[i][attr] === value) {
+                return list[i];
+            }
+        }
+        return undefined;
     }
 };

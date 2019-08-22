@@ -1,19 +1,8 @@
-var expect = require("chai").expect;
-const rollup = require('rollup');
-var parseUMD = function(name, file) {
-    return rollup.rollup({ input: file })
-        .then(bundle => bundle.generate({ name: name, format: 'umd' }))
-        .then(generated => {
-            var code = generated.code || generated.output[0].code;
-            try {
-                eval(code);
-            } catch (e) {
-                console.log('Error eval script', e);
-            }
-            return module.exports;
-        });
-}
-var execute = parseUMD('crumbHandler', 'src/main/crumb.js');
+const expect = require("chai").expect;
+const moduleLoad = require('./moduleLoad');
+
+var execute = moduleLoad('crumbHandler', 'src/main/crumb.js');
+
 describe("Test crumbHandler", function() {
     it("Compile Crumb", function() {
         return execute.then(crumbHandler => {
@@ -23,8 +12,9 @@ describe("Test crumbHandler", function() {
     it("Crumb Default", function() {
         return execute.then(crumbHandler => {
             let crumb = crumbHandler();
-            expect(crumb.name()).to.equal("index");
-            expect(crumb.index).to.equal(true);
+            expect(crumb.name()).be.undefined;
+            //expect(crumb.name()).to.equal("index");
+            //expect(crumb.index).to.equal(true);
         });
     });
     it("Crumb other", function() {
@@ -88,7 +78,8 @@ describe("Test crumbHandler", function() {
     });
     it("Crumb open A <- <- <-", function() {
         return execute.then(crumbHandler => {
-            let crumb = crumbHandler('A');
+            let crumb = crumbHandler();
+            crumb.open('A');
             crumb.back();
             crumb.back();
             crumb.back();

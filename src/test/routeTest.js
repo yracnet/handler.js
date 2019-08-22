@@ -1,19 +1,7 @@
-var expect = require("chai").expect;
-const rollup = require('rollup');
-var parseUMD = function(name, file) {
-    return rollup.rollup({ input: file })
-        .then(bundle => bundle.generate({ name: name, format: 'umd' }))
-        .then(generated => {
-            var code = generated.code || generated.output[0].code;
-            try {
-                eval(code);
-            } catch (e) {
-                console.log('Error eval script', e);
-            }
-            return module.exports;
-        });
-};
-var execute = parseUMD('routeHandler', 'src/main/route.js');
+const expect = require("chai").expect;
+const moduleLoad = require('./moduleLoad');
+
+var execute = moduleLoad('routeHandler', 'src/main/route.js');
 
 var graphBasic = [
     { name: 'a', next: 'b' },

@@ -13,12 +13,15 @@ import _delegate from './util/delegate';
 
 export default function crumbHandler(name) {
     let _state = {
-        default: name || 'index',
-        name: name || 'index',
+        default: name,
+        name: name,
         stack: new Array()
     };
     let _function = {
         open: function(name) {
+            if (!_state.default) {
+                _state.default = name;
+            }
             if (name === _state.name) {
                 return false;
             }
