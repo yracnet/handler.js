@@ -3,62 +3,50 @@
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.min.js"></script>
     <script src="../../target/handler.js"></script>
+    <link rel="stylesheet" href="styles.css">
     <script>
-        console.log('--->', handler);
         angular.module('handler', [])
-            .controller('panel', function ($scope) {
-                $scope.panel = handler.panelHandler('page1');
+            .controller('crumb', function ($scope) {
+                $scope.crumb = handler.crumbHandler('page1');
                 $scope.go = function (name) {
-                    $scope.panel.open(name);
+                    $scope.crumb.open(name);
                 }
                 $scope.back = function () {
-                    $scope.panel.back();
+                    $scope.crumb.back();
                 }
             });
     </script>
-    <style>
-        .example>div {
-            border: 2px solid red;
-            width: 300px;
-            height: auto;
-            text-align: center;
-        }
-
-        .example>div>a {
-            padding: 0 10px;
-        }
-    </style>
 </head>
 
 <body ng-app="handler">
-    <div ng-controller="panel" class="example">
+    <div ng-controller="crumb" class="example">
         <a href="#" ng-click="back()"> Atras </a>
-        <div ng-if="panel.page1">
+        <div ng-if="crumb.page1">
             <p>Pagina 1</p>
             <a href="#" ng-click="back()"> Atras </a>
             <a href="#" ng-click="go('page2')"> Pagina 2 </a>
         </div>
-        <div ng-if="panel.page2">
+        <div ng-if="crumb.page2">
             <p>Pagina 2</p>
             <a href="#" ng-click="back()"> Atras </a>
             <a href="#" ng-click="go('page3')"> Pagina 3 </a>
         </div>
-        <div ng-if="panel.page3">
+        <div ng-if="crumb.page3">
             <p>Pagina 3</p>
             <a href="#" ng-click="back()"> Atras </a>
             <a href="#" ng-click="go('page4')"> Pagina 4 </a>
         </div>
-        <div ng-if="panel.page4">
+        <div ng-if="crumb.page4">
             <p>Pagina 4</p>
             <a href="#" ng-click="back()"> Atras </a>
             <a href="#" ng-click="go('page5')"> Pagina 5 </a>
         </div>
-        <div ng-if="panel.page5">
+        <div ng-if="crumb.page5">
             <p>Pagina 5</p>
             <a href="#" ng-click="back()"> Atras </a>
             <a href="#" ng-click="go('page3')"> Pagina 3 </a>
         </div>
-        <code>Tracer:{{panel.tracer()}}</code>
+        <code>Tracer:{{crumb.tracer()}}</code>
     </div>
 
 </body>

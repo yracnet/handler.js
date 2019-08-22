@@ -1,9 +1,10 @@
 //var { version } = require('../package.json');
-import panelHandler from './main/panel';
+import crumbHandler from './main/crumb';
 import routeHandler from './main/route';
+
 
 export default {
   //version,
-  panelHandler,
+  crumbHandler,
   routeHandler
 };

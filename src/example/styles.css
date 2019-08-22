@@ -1,0 +1,11 @@
+
+        .example>div {
+            border: 2px solid red;
+            width: 300px;
+            height: auto;
+            text-align: center;
+        }
+
+        .example>div>a {
+            padding: 0 10px;
+        }

@@ -1,10 +1,12 @@
 <html>
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.min.js"></script>
     <script src="../../target/handler.js"></script>
+    <title>Router Handler Example</title>
     <script>
-        console.log('--->', handler);
         angular.module('handler', [])
             .controller('route', function ($scope) {
                 $scope.model = { value: "page3a" };
@@ -41,22 +43,13 @@
                 }
             });
     </script>
-    <style>
-        .example>div {
-            border: 2px solid red;
-            width: 300px;
-            height: auto;
-            text-align: center;
-        }
-
-        .example>div>a {
-            padding: 0 10px;
-        }
-    </style>
 </head>
 
-<body ng-app="handler">
-    <div ng-controller="route" class="example">
+<body ng-app="handler" class="container">
+    <div ng-controller="route" class="content">
+        <div class="page">
+
+        </div>
         <a href="#" ng-click="back()"> Atras </a>
         <code>{{route.node()}}</code>
         <div ng-if="route.page1">

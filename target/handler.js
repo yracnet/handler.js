@@ -50,17 +50,18 @@
     }
 
     /**
-     * let panel = panelHandler('a');
-     * console.log('state: ', panel.a, panel.b, panel.c); //true, false, false
-     * panel.open('b');
-     * console.log('state: ', panel.a, panel.b, panel.c); //false, true, false
-     * panel.open('c');
-     * console.log('state: ', panel.a, panel.b, panel.c); //false, false, true
-     * panel.back();
-     * panel.back();
-     * console.log('state: ', panel.a, panel.b, panel.c); //true, false, false
+     * let crumb = crumbHandler('a');
+     * console.log('state: ', crumb.a, crumb.b, crumb.c); //true, false, false
+     * crumb.open('b');
+     * console.log('state: ', crumb.a, crumb.b, crumb.c); //false, true, false
+     * crumb.open('c');
+     * console.log('state: ', crumb.a, crumb.b, crumb.c); //false, false, true
+     * crumb.back();
+     * crumb.back();
+     * console.log('state: ', crumb.a, crumb.b, crumb.c); //true, false, false
      */
-    function panelHandler(name) {
+
+    function crumbHandler(name) {
       let _state = {
         default: name || 'index',
         name: name || 'index',
@@ -81,7 +82,7 @@
           return _state.stack.slice();
         }
       };
-      return _delegate('panelHandler', _function, attr => attr === _state.name);
+      return _delegate('crumbHandler', _function, attr => attr === _state.name);
     }
 
     var _help = {
@@ -185,9 +186,10 @@
 
     //var { version } = require('../package.json');
 
+
     var main = {
       //version,
-      panelHandler,
+      crumbHandler,
       routeHandler
     };
 
