@@ -57,9 +57,10 @@
 
     <div class="container" ng-controller="window">
         <div class="row a-link">
-            <strong>PAGE</strong>
-            <a href="#" ng-repeat="o in module" ng-click="open(o)"> Open {{o.id}} </a>
+            <strong>OPEN PAGE</strong>
+            <a href="#" ng-repeat="o in module" ng-click="open(o)">{{o.id}} </a>
         </div>
+        <hr/>
         <div class="row">
             <ul class="list-group col-2">
                 <li class="list-group-item">
@@ -84,32 +85,22 @@
                 </div>
 
             </div>
-            <!--
-            <div class="col-10">
-                <div>
-                    <ul class="nav nav-tabs">
-                        <li class="nav-item" ng-repeat="o in window.sort()">
-                            <span class="nav-link" ng-class="window[o.id]? 'active': 'inactive'">
-                                <a href="#" ng-click="open(o.id)">{{o.title}} </a> 
-                                <a href="#" ng-click="close(o.id)">X</a> 
-                            </span>
-                        </li>
-                    </ul>
-                </div>
-                <br/>
-                <div class="container-window">
-                    <div class="card" ng-repeat="o in window.sort()" ng-class="'level'+$index">
-                        <div class="card-header">
-                            {{o.title}} <a href="#" ng-click="close(o.id)">X</a>
-                        </div>
-                        <div class="card-body">
-                            <div ng-include="o.page">Load Step 1</div>
-                        </div>
+        </div>
+        <!--
+        <div class="row">
+            <div class="container-window">
+                <div class="card" ng-repeat="o in window.sort()" ng-class="'level'+o.$order">
+                    <div class="card-header">
+                        {{o.title}} <a href="#" ng-click="close(o.id)">X</a>
+                    </div>
+                    <div class="card-body">
+                        <div ng-include="o.page">Load Step 1</div>
                     </div>
                 </div>
             </div>
-            -->
         </div>
+    -->
+        <hr/>
 
 
 
