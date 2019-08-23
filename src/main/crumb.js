@@ -53,8 +53,8 @@ export default function crumbHandler(_config) {
         length: function() {
             return _state.stack.length;
         },
-        tracer: function(invert) {
-            return invert ? _state.stack.slice().invert() : _state.stack.slice();
+        tracer: function(reverse) {
+            return reverse ? _state.stack.slice().reverse() : _state.stack.slice();
         }
     };
     return _delegate('crumbHandler', _function, attr => _function.isOpen(attr));
