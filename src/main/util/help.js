@@ -1,10 +1,26 @@
+Array.prototype.last = Array.prototype.last || function() {
+    return this[this.length - 1];
+}
 export default {
     routeVerify: function(graph) {
         graph = graph || [];
         return graph;
     },
+    crumbConfig: function(config) {
+        if (!config || typeof config === 'string') {
+            config = {
+                attr: config
+            };
+        }
+        return {
+            default: config.default,
+            attr: config.attr || 'name',
+            next: config.next || 'next',
+            check: config.check || true
+        };
+    },
     routeConfig: function(config) {
-        if (typeof config === 'string' || !config) {
+        if (!config || typeof config === 'string') {
             config = {
                 start: config
             };
@@ -17,7 +33,7 @@ export default {
         };
     },
     windowConfig: function(config) {
-        if (typeof config === 'string' || !config) {
+        if (!config || typeof config === 'string') {
             config = {
                 attr: config
             };

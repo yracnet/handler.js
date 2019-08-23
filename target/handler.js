@@ -49,61 +49,29 @@
         return new Proxy(_function, _handler);
     }
 
-    /**
-     * let crumb = crumbHandler('a');
-     * console.log('state: ', crumb.a, crumb.b, crumb.c); //true, false, false
-     * crumb.open('b');
-     * console.log('state: ', crumb.a, crumb.b, crumb.c); //false, true, false
-     * crumb.open('c');
-     * console.log('state: ', crumb.a, crumb.b, crumb.c); //false, false, true
-     * crumb.back();
-     * crumb.back();
-     * console.log('state: ', crumb.a, crumb.b, crumb.c); //true, false, false
-     */
-
-    function crumbHandler(name) {
-        let _state = {
-            default: name,
-            name: name,
-            stack: new Array()
-        };
-        let _function = {
-            open: function(name) {
-                if (!_state.default) {
-                    _state.default = name;
-                }
-                if (name === _state.name) {
-                    return false;
-                }
-                _state.stack.push(_state.name);
-                _state.name = name;
-                return true;
-            },
-            back: function() {
-                _state.name = _state.stack.pop() || _state.default;
-            },
-            go: function(index) {
-                index = index >= 0 ? index : 0;
-                _state.stack = _state.stack.slice(0, index + 1);
-                _state.name = _state.stack.pop() || _state.default;
-            },
-            name: function() {
-                return _state.name;
-            },
-            tracer: function() {
-                return _state.stack.slice();
-            }
-        };
-        return _delegate('crumbHandler', _function, attr => attr === _state.name);
-    }
-
+    Array.prototype.last = Array.prototype.last || function() {
+        return this[this.length - 1];
+    };
     var _help = {
         routeVerify: function(graph) {
             graph = graph || [];
             return graph;
         },
+        crumbConfig: function(config) {
+            if (!config || typeof config === 'string') {
+                config = {
+                    attr: config
+                };
+            }
+            return {
+                default: config.default,
+                attr: config.attr || 'name',
+                next: config.next || 'next',
+                check: config.check || true
+            };
+        },
         routeConfig: function(config) {
-            if (typeof config === 'string' || !config) {
+            if (!config || typeof config === 'string') {
                 config = {
                     start: config
                 };
@@ -116,7 +84,7 @@
             };
         },
         windowConfig: function(config) {
-            if (typeof config === 'string' || !config) {
+            if (!config || typeof config === 'string') {
                 config = {
                     attr: config
                 };
@@ -145,6 +113,66 @@
             return undefined;
         }
     };
+
+    /**
+     * let crumb = crumbHandler();
+     * crumb.open('b');
+     * console.log('state: ', crumb.a, crumb.b, crumb.c); //true, false, false
+     * crumb.open('b');
+     * console.log('state: ', crumb.a, crumb.b, crumb.c); //false, true, false
+     * crumb.open('c');
+     * console.log('state: ', crumb.a, crumb.b, crumb.c); //false, false, true
+     * crumb.back();
+     * crumb.back();
+     * console.log('state: ', crumb.a, crumb.b, crumb.c); //true, false, false
+     */
+
+    function crumbHandler(_config) {
+        _config = _help.crumbConfig(_config);
+        let _state = {
+            node: undefined,
+            stack: new Array()
+        };
+        let _function = {
+            open: function(node) {
+                if (typeof node !== "object") {
+                    return false;
+                }
+                let value = node[_config.attr];
+                if (_function.isOpen(value)) {
+                    return false;
+                }
+                _state.stack.push(node);
+                _state.node = node;
+                return true;
+            },
+            back: function() {
+                _state.stack.pop();
+                _state.node = _state.stack.last() || _config.default;
+            },
+            go: function(index) {
+                index = index >= 0 ? index : 0;
+                _state.stack = _state.stack.slice(0, index + 1);
+                _state.node = _state.stack.last() || _config.default;
+            },
+            name: function() {
+                return _state.node ? _state.node[_config.attr] : undefined;
+            },
+            isOpen: function(value) {
+                return _state.node && _state.node[_config.attr] === value;
+            },
+            node: function() {
+                return _state.node;
+            },
+            length: function() {
+                return _state.stack.length;
+            },
+            tracer: function() {
+                return _state.stack.slice();
+            }
+        };
+        return _delegate('crumbHandler', _function, attr => _function.isOpen(attr));
+    }
 
     /**
      * route graph:
@@ -258,7 +286,6 @@
                 if (!node || !value || (_state.node && value === _state.node[_config.attr])) {
                     return false;
                 }
-                //_state.stack.filter(o => o[_config.attr] === value).forEach(o => o.$order = null);
                 if (!node.$order) {
                     node.$order = _state.count++;
                 }
@@ -269,14 +296,17 @@
             },
             close: function(node) {
                 if (node) {
+                    //remove $order
                     let value = typeof node === "object" ? node[_config.attr] : node;
                     _state.stack.filter(o => o[_config.attr] === value).forEach(o => delete o.$order);
+                    //remove object
                     _state.stack = _state.stack.filter(o => o[_config.attr] !== value);
                     _state.node = _state.stack[_state.stack.length - 1];
                 } else {
-                    //_state.stack.filter(o => o[_config.attr] === value).forEach(o => delete o.$order);
+                    //remove $order
                     let o = _state.stack[_state.stack.length - 1];
                     delete o.$order;
+                    //remove object
                     _state.stack.pop();
                     _state.node = _state.stack[_state.stack.length - 1];
                 }

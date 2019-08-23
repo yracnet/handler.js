@@ -9,16 +9,32 @@
     <script>
         angular.module('handler', [])
             .controller('crumb', function($scope) {
-                $scope.page = {
-                    page1: 'page/page1.html',
-                    page2: 'page/page2.html',
-                    page3: 'page/page3.html',
-                    page4: 'page/page4.html',
-                    page5: 'page/page5.html'
-                };
-                $scope.crumb = handler.crumbHandler('page3');
-                $scope.open = function(name) {
-                    $scope.crumb.open(name);
+                $scope.pages = [{
+                    id: 'p1',
+                    page: 'page/page1.html',
+                    title: 'Page 1'
+                }, {
+                    id: 'p2',
+                    page: 'page/page2.html',
+                    title: 'Page 2'
+                }, {
+                    id: 'p3',
+                    page: 'page/page3.html',
+                    title: 'Page 3'
+                }, {
+                    id: 'p4',
+                    page: 'page/page4.html',
+                    title: 'Page 4'
+                }, {
+                    id: 'p5',
+                    page: 'page/page5.html',
+                    title: 'Page 5'
+                }];
+                $scope.crumb = handler.crumbHandler({
+                    attr: 'id'
+                });
+                $scope.open = function(page) {
+                    $scope.crumb.open(page);
                 }
                 $scope.back = function() {
                     $scope.crumb.back();
@@ -33,21 +49,15 @@
 <body ng-app="handler">
     <div ng-controller="crumb" class="container">
         <div class="row a-link">
-            <strong>NAVEGATION</strong>
+            <strong>PAGES:</strong>
             <a href="#" ng-click="back()"> Atras </a>
-            <a href="#" ng-click="open('page1')"> Page 1 </a>
-            <a href="#" ng-click="open('page2')"> Page 2 </a>
-            <a href="#" ng-click="open('page3')"> Page 3 </a>
-            <a href="#" ng-click="open('page4')"> Page 4 </a>
-            <a href="#" ng-click="open('page5')"> Page 5 </a>
+            <a href="#" ng-repeat="o in pages" ng-click="open(o)"> {{o.title}} </a>
         </div>
         <hr />
         <div class="row">
-            <div ng-if="crumb.page1" ng-include="page.page1">Load Page 1</div>
-            <div ng-if="crumb.page2" ng-include="page.page2">Load Page 2</div>
-            <div ng-if="crumb.page3" ng-include="page.page3">Load Page 3</div>
-            <div ng-if="crumb.page4" ng-include="page.page4">Load Page 4</div>
-            <div ng-if="crumb.page5" ng-include="page.page5">Load Page 5</div>
+            <span ng-repeat="o in pages">
+                <div ng-if="crumb[o.id]" ng-include="o.page">Load Page</div>
+            </span>
         </div>
         <hr />
         <div class="row">
@@ -55,9 +65,8 @@
                 <a href="http://www.tutorialmines.net" class="btn btn-default">Breadcrumb</a>
 
                 <a href="#" class="btn btn-default" ng-repeat="item in crumb.tracer() track by $index" ng-click="go($index)">
-                        {{item}}
+                        {{item.title}}
                 </a>
-                <a href="#" class="btn btn-default">{{crumb.name()}}</a>
             </div>
         </div>
         <hr />
@@ -65,9 +74,9 @@
             <h6>
                 <b>Name: </b>{{crumb.name()}}
                 <hr />
-                <b>Node: </b>{{crumb.node()}}
+                <b>Node: </b><code>{{crumb.node()|json}}</code>
                 <hr />
-                <b>Tracer: </b>{{crumb.tracer()}}
+                <b>Tracer: </b><code>{{crumb.tracer()|json}}</code>
             </h6>
         </div>
     </div>
